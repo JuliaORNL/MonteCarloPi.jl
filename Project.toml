@@ -1,0 +1,10 @@
+name = "MonteCarloPi"
+uuid = "d645e5ed-6fab-4024-8828-194a98f25d0b"
+authors = ["William F Godoy <williamfgc@yahoo.com>"]
+version = "0.1.0"
+
+[deps]
+JACC = "0979c8fe-16a4-4796-9b82-89a9f10403ea"
+
+[compat]
+JACC = "0.4.0"
