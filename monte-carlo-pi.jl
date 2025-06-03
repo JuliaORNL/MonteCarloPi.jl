@@ -1,4 +1,3 @@
-
 import MonteCarloPi
 
 function julia_main()::Cint
@@ -8,11 +7,18 @@ function julia_main()::Cint
     end
 
     n_samples = parse(Int64, ARGS[1])
-    pi_value = MonteCarloPi.serial_pi(n_samples)
-    println("Estimated value of Pi: ", pi_value)
+
+    @time pi_value_ref = MonteCarloPi.serial_pi(n_samples)
+    println("Ref estimated value of Pi: ", pi_value_ref)
+
+    @time pi_value_jacc = MonteCarloPi.jacc_pi(n_samples)
+    println("JACC estimated value of Pi: ", pi_value_jacc)
+
+    @time pi_value_atomic = MonteCarloPi.jacc_pi_atomic(n_samples)
+    println("JACC atomic estimated value of Pi: ", pi_value_atomic)
     return 0
 end
 
 if !isdefined(Base, :active_repl)
-    @time julia_main()
+    julia_main()
 end
