@@ -11,11 +11,14 @@ function julia_main()::Cint
     @time pi_value_ref = MonteCarloPi.serial_pi(n_samples)
     println("Ref estimated value of Pi: ", pi_value_ref)
 
-    @time pi_value_jacc = MonteCarloPi.jacc_pi(n_samples)
-    println("JACC estimated value of Pi: ", pi_value_jacc)
+    # Warmup call
+    pi_value_atomic = MonteCarloPi.jacc_pi_atomic(10)
 
     @time pi_value_atomic = MonteCarloPi.jacc_pi_atomic(n_samples)
     println("JACC atomic estimated value of Pi: ", pi_value_atomic)
+
+    @time pi_value_jacc = MonteCarloPi.jacc_pi(n_samples)
+    println("JACC estimated value of Pi: ", pi_value_jacc)
     return 0
 end
 
