@@ -34,7 +34,7 @@ serial_pi(n_samples::Int64) = serial_pi(Float64, n_samples)
 function jacc_pi(::Type{T}, n_samples::Int64) where {T<:AbstractFloat}
 
     counts = JACC.zeros(Int64, n_samples)
-    println("num threads: ", Threads.nthreads())
+    println("num CPU threads: ", Threads.nthreads())
 
     function calc(i, a)
         x = rand(T)
@@ -42,6 +42,7 @@ function jacc_pi(::Type{T}, n_samples::Int64) where {T<:AbstractFloat}
         @inbounds a[i] = x^2 + y^2 <= 1.0 ? 1 : 0
     end
 
+    # JACC.parallel_for(JACC.launch_spec(; threads = 1), n_samples, calc, counts
     JACC.parallel_for(n_samples, calc, counts)
     res = JACC.parallel_reduce(counts)
     return 4.0 * res / n_samples
@@ -58,14 +59,14 @@ jacc_pi(n_samples::Int64) = jacc_pi(Float64, n_samples)
 function jacc_pi_atomic(::Type{T}, n_samples::Int64) where {T<:AbstractFloat}
 
     count = Int64(0)
-    println("num threads: ", Threads.nthreads())
+    println("num CPU threads: ", Threads.nthreads())
 
     function calc(i, count)
         x = rand(T)
         y = rand(T)
         res = x^2 + y^2 <= 1.0 ? 1 : 0
         if res > 0
-            JACC.@atomic count[1] += 1
+            @inbounds JACC.@atomic count[1] += 1
         end
     end
     JACC.parallel_for(n_samples, calc, count)
